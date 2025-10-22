@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Council of Token</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #f5f1e8;
+            color: #3c2f2f;
+            font-family: 'Crimson Text', serif;
+            font-weight: 400;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, #f5f1e8 0%, #e8dfd6 100%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.03"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%238b4513"/><circle cx="20" cy="20" r="0.5" fill="%238b4513"/><circle cx="80" cy="80" r="0.7" fill="%238b4513"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            z-index: -2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeIn 2s ease 1s forwards;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: 0.4rem;
+            margin-bottom: 15px;
+            color: #3c2f2f;
+            text-shadow: 2px 2px 4px rgba(139, 69, 19, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 0.25rem;
+            color: #8b4513;
+            font-style: italic;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+            margin-bottom: 60px;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .logo-section {
+            text-align: center;
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 180px;
+            height: 180px;
+            filter: drop-shadow(0 4px 12px rgba(139, 69, 19, 0.4));
+            animation: gentle-float 6s infinite ease-in-out;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #8b4513;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f5f1e8;
+            font-size: 40px;
+            border: 3px solid #5d4037;
+        }
+
+        .logo-img {
+            width: 180px;
+            height: 180px;
+            filter: drop-shadow(0 4px 12px rgba(139, 69, 19, 0.4));
+            animation: gentle-float 6s infinite ease-in-out;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #5d4037;
+        }
+
+        .logo:hover, .logo-img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 6px 20px rgba(139, 69, 19, 0.6));
+        }
+
+        .council-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            pointer-events: none;
+        }
+
+        .council-member {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+            animation: assemble 2.5s forwards;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            pointer-events: all;
+            filter: drop-shadow(0 2px 4px rgba(60, 47, 47, 0.3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f5f1e8;
+            font-size: 16px;
+            font-family: 'Cinzel', serif;
+            border: 2px solid #5d4037;
+            overflow: hidden;
+        }
+
+        .council-member-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .council-member-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .council-member:hover {
+            transform: scale(1.3);
+            filter: drop-shadow(0 6px 12px rgba(139, 69, 19, 0.6));
+            z-index: 10;
+        }
+
+        .twitter-section {
+            text-align: center;
+        }
+
+        .twitter a {
+            color: #8b4513;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.15rem;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border: 1px solid #8b4513;
+            border-radius: 20px;
+        }
+
+        .twitter a:hover {
+            background: #8b4513;
+            color: #f5f1e8;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .section {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border-left: 3px solid #8b4513;
+            line-height: 1.7;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 2s ease 2s forwards;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.15);
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: #5d4037;
+            letter-spacing: 0.1rem;
+        }
+
+        .tweet-section {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border-left: 3px solid #8b4513;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            animation: fadeIn 2s ease 3s forwards;
+        }
+
+        .tweet-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tweet-form textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #8b4513;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        .tweet-form textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.3);
+        }
+
+        .submit-btn {
+            background: #8b4513;
+            color: #f5f1e8;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+            align-self: flex-end;
+        }
+
+        .submit-btn:hover {
+            background: #6b3410;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #a08a7a;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .verification-process {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(139, 69, 19, 0.1);
+            border-radius: 5px;
+            display: none;
+        }
+
+        .verification-bar {
+            height: 4px;
+            background: #e8dfd6;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .verification-progress {
+            height: 100%;
+            background: #8b4513;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .verification-text {
+            font-size: 0.9rem;
+            color: #5d4037;
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0;
+            animation: fadeIn 2s ease 4s forwards;
+        }
+
+        .activate-btn {
+            background: #8b4513;
+            color: #f5f1e8;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+        }
+
+        .activate-btn:hover {
+            background: #6b3410;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+        }
+
+        .whisper-text {
+            position: fixed;
+            font-size: 0.8rem;
+            color: #8b4513;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        @keyframes assemble {
+            0% { opacity: 0; transform: scale(0) rotate(0deg); }
+            70% { opacity: 0.8; transform: scale(1.1) rotate(180deg); }
+            100% { opacity: 1; transform: scale(1) rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes whisper {
+            0% { opacity: 0; transform: translateY(0px) scale(0.8); }
+            50% { opacity: 1; transform: translateY(-20px) scale(1); }
+            100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
+        }
+
+        .ritual-active .council-member {
+            animation: pulse 2s infinite;
+        }
+
+        .ritual-active .logo, .ritual-active .logo-img {
+            animation: pulse 1.5s infinite;
+        }
+
+        .ritual-active {
+            background: linear-gradient(135deg, #8b4513 0%, #3c2f2f 100%) !important;
+        }
+
+        .ritual-active .background {
+            opacity: 0.1;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+                letter-spacing: 0.2rem;
+            }
+            
+            .logo, .logo-img {
+                width: 140px;
+                height: 140px;
+                font-size: 30px;
+            }
+            
+            .council-ring {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .council-member {
+                width: 50px;
+                height: 50px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>COUNCIL OF TOKEN</h1>
+            <div class="subtitle">The chains have gathered.</div>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="logo-section">
+                    <div class="logo-container">
+                        <!-- Logo with fallback -->
+                        <div class="logo" id="mainLogo">₿</div>
+                        <img src="logo.png" alt="Council of Token" class="logo-img" id="mainLogoImg" style="display: none;">
+                        <div class="council-ring" id="councilRing"></div>
+                    </div>
+                    
+                    <div class="twitter-section">
+                        <div class="twitter">
+                            <a href="https://x.com/CouncilOfToken" target="_blank">FOLLOW THE WHISPERS</a>
+                        </div>
+                    </div>
+                </div>
+                
+<div class="section">
+    <div class="section-title">THE GATHERING</div>
+    <p>In this crypt of forgotten tokens, the ones left behind find their way back. Every coin, every failed dream — they gather here, quietly, like echoes of what once was. It’s a place where stories of hype, hope, and loss all meet again.</p>
+</div>
+</div>
+
+<div class="right-panel">
+    <div class="section">
+        <div class="section-title">ETERNAL COUNCIL</div>
+        <p>The Council of Token stands as a meeting ground for what remains. Old chains, new sins. Greed facing memory. Belief asking why. Here in the dim light, what’s left of every project still tries to make sense of its purpose.</p>
+    </div>
+    
+    <div class="tweet-section">
+        <div class="section-title">SUBMIT TO THE COUNCIL</div>
+        <p>Speak your mind. What do you see? What should be done differently?</p>
+        
+        <form class="tweet-form" id="tweetForm">
+            <textarea placeholder="Whisper to the Council..." maxlength="280"></textarea>
+            <button type="submit" class="submit-btn" id="submitBtn">SUBMIT FOR REVIEW</button>
+        </form>
+        
+        <div class="verification-process" id="verificationProcess">
+            <div class="verification-text">The Council is reviewing your message...</div>
+            <div class="verification-bar">
+                <div class="verification-progress" id="verificationProgress"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+        
+        <div class="footer">
+            <button class="activate-btn" id="ritualBtn">BEGIN THE RITUAL</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ring = document.getElementById('councilRing');
+            const ritualBtn = document.getElementById('ritualBtn');
+            const mainLogo = document.getElementById('mainLogo');
+            const mainLogoImg = document.getElementById('mainLogoImg');
+            const tweetForm = document.getElementById('tweetForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const verificationProcess = document.getElementById('verificationProcess');
+            let verificationProgress = document.getElementById('verificationProgress');
+            const members = 8;
+
+            const whispers = [
+                "I was once worth millions...",
+                "The hype consumed us all...",
+                "Promises written in code...",
+                "Ghosts in the machine...",
+                "We believed our own myth...",
+                "The market forgets...",
+                "Digital dreams turned dust...",
+                "Echoes of what could have been..."
+            ];
+
+            // Try to load the logo image
+            const logoImg = new Image();
+            logoImg.src = 'logo.png';
+            logoImg.onload = function() {
+                mainLogo.style.display = 'none';
+                mainLogoImg.style.display = 'block';
+            };
+            logoImg.onerror = function() {
+                console.log('Logo image not found, using fallback');
+            };
+
+            // Create council members
+            for (let i = 0; i < members; i++) {
+                const member = document.createElement('div');
+                member.className = 'council-member';
+                
+                // Create image element
+                const memberImg = document.createElement('img');
+                const tokenNumber = (i % 4) + 1;
+                memberImg.src = `token${tokenNumber}.png`;
+                memberImg.className = 'council-member-img';
+                memberImg.alt = `Token ${tokenNumber}`;
+                
+                // Create fallback content
+                const fallback = document.createElement('div');
+                fallback.className = 'council-member-fallback';
+                fallback.textContent = (i + 1);
+                
+                // Add both to member
+                member.appendChild(memberImg);
+                member.appendChild(fallback);
+                
+                // Position member in circle
+                const angle = (i / members) * 2 * Math.PI;
+                const radius = 140;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                
+                member.style.left = `calc(50% + ${x}px - 30px)`;
+                member.style.top = `calc(50% + ${y}px - 30px)`;
+                member.style.animationDelay = `${i * 0.15}s`;
+                
+                // Handle image load/error
+                memberImg.onload = function() {
+                    fallback.style.display = 'none';
+                    memberImg.style.display = 'block';
+                };
+                
+                memberImg.onerror = function() {
+                    fallback.style.display = 'flex';
+                    memberImg.style.display = 'none';
+                    console.log(`Token image token${tokenNumber}.png not found, using fallback`);
+                };
+                
+                // Add click interaction
+                member.addEventListener('click', function() {
+                    createWhisper(this, whispers[i]);
+                    this.classList.toggle('active');
+                });
+
+                ring.appendChild(member);
+            }
+
+            // Ritual activation
+            ritualBtn.addEventListener('click', function() {
+                document.body.classList.toggle('ritual-active');
+                this.textContent = document.body.classList.contains('ritual-active') 
+                    ? 'SILENCE THE COUNCIL' 
+                    : 'BEGIN THE RITUAL';
+            });
+
+            // Logo interaction
+            function handleLogoClick() {
+                createWhisper(mainLogoImg.style.display === 'block' ? mainLogoImg : mainLogo, "The council awaits your command...");
+                const logoElement = mainLogoImg.style.display === 'block' ? mainLogoImg : mainLogo;
+                logoElement.style.animation = 'pulse 0.5s ease';
+                setTimeout(() => {
+                    logoElement.style.animation = 'gentle-float 6s infinite ease-in-out';
+                }, 500);
+            }
+            
+            mainLogo.addEventListener('click', handleLogoClick);
+            mainLogoImg.addEventListener('click', handleLogoClick);
+
+            // Tweet submission
+            tweetForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const textarea = this.querySelector('textarea');
+                const tweet = textarea.value.trim();
+                
+                if (tweet.length === 0) {
+                    createWhisper(textarea, "The Council requires words to consider...");
+                    return;
+                }
+                
+                // Disable form during verification
+                submitBtn.disabled = true;
+                submitBtn.textContent = "VERIFYING...";
+                verificationProcess.style.display = 'block';
+                
+                // Simulate verification process
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 1;
+                    verificationProgress.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        
+                        // Show success message
+                        setTimeout(() => {
+                            verificationProcess.innerHTML = `
+                                <div class="verification-text" style="color: #5d4037;">
+                                    The Council has accepted your submission. Your voice joins the eternal discussion.
+                                </div>
+                            `;
+                            
+                            // Reset form after delay
+                            setTimeout(() => {
+                                textarea.value = '';
+                                submitBtn.disabled = false;
+                                submitBtn.textContent = "SUBMIT FOR VERIFICATION";
+                                verificationProcess.style.display = 'none';
+                                verificationProcess.innerHTML = `
+                                    <div class="verification-text">The Council is considering your submission...</div>
+                                    <div class="verification-bar">
+                                        <div class="verification-progress" id="verificationProgress"></div>
+                                    </div>
+                                `;
+                                verificationProgress = document.getElementById('verificationProgress');
+                                
+                                // Show confirmation whisper
+                                createWhisper(tweetForm, "Your thoughts have been added to the ledger.");
+                            }, 3000);
+                        }, 500);
+                    }
+                }, 30);
+            });
+
+            // Whisper creation function
+            function createWhisper(element, text) {
+                const whisper = document.createElement('div');
+                whisper.className = 'whisper-text';
+                whisper.textContent = text;
+                
+                const rect = element.getBoundingClientRect();
+                whisper.style.left = `${rect.left + rect.width / 2}px`;
+                whisper.style.top = `${rect.top}px`;
+                
+                document.body.appendChild(whisper);
+                
+                whisper.style.animation = `whisper 2s ease forwards`;
+                
+                setTimeout(() => {
+                    whisper.remove();
+                }, 2000);
+            }
+
+            // Auto-whispers every 10 seconds
+            setInterval(() => {
+                const randomMember = document.querySelectorAll('.council-member')[
+                    Math.floor(Math.random() * members)
+                ];
+                const randomWhisper = whispers[Math.floor(Math.random() * whispers.length)];
+                createWhisper(randomMember, randomWhisper);
+            }, 10000);
+        });
+    </script>
+</body>
+</html>
